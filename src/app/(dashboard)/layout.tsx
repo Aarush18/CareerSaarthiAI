@@ -1,16 +1,21 @@
-
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/modules/dashboard/ui/components/dashboard-sidebar";
 
-export default function Home() {
+
+interface Props {
+  children: React.ReactNode;
+}
+
+const Layout = ({ children }: Props) => {
   return (
     <SidebarProvider>
       <DashboardSidebar>
-        <main className="flex flex-col h-screen w-screen bg-muted p-6">
-          <h1 className="text-2xl font-semibold">Home</h1>
-          <p className="text-muted-foreground mt-2">Welcome.</p>
+        <main className="flex flex-col h-screen w-screen bg-muted">
+          {children}
         </main>
       </DashboardSidebar>
     </SidebarProvider>
-  )
-}
+  );
+};
+
+export default Layout;
