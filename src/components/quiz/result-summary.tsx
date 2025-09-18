@@ -11,7 +11,9 @@ import {
   MessageCircle, 
   GraduationCap,
   TrendingUp,
-  AlertTriangle
+  AlertTriangle,
+  Download,
+  Copy
 } from "lucide-react";
 import Link from "next/link";
 
@@ -22,6 +24,7 @@ interface ResultSummaryProps {
   suggestedStreams: string[];
   weakTopics: string[];
   submissionId: string;
+  forLevel?: string;
 }
 
 const RIASEC_LABELS = {
@@ -48,7 +51,8 @@ export function ResultSummary({
   traits, 
   suggestedStreams, 
   weakTopics,
-  submissionId 
+  submissionId,
+  forLevel = "ANY"
 }: ResultSummaryProps) {
   const scorePercentage = score && maxScore ? (score / maxScore) * 100 : 0;
   
@@ -56,6 +60,56 @@ export function ResultSummary({
   const sortedTraits = Object.entries(traits)
     .sort(([,a], [,b]) => b - a)
     .slice(0, 3); // Top 3 traits
+
+  // Generate LLM-ready JSON data
+  const llmData = {
+    studentProfile: {
+      classLevel: forLevel,
+      submissionId: submissionId,
+      timestamp: new Date().toISOString(),
+    },
+    assessmentResults: {
+      aptitudeScore: {
+        score: score,
+        maxScore: maxScore,
+        percentage: scorePercentage,
+        level: scorePercentage >= 80 ? "Excellent" : 
+               scorePercentage >= 60 ? "Good" : 
+               scorePercentage >= 40 ? "Fair" : "Needs Improvement"
+      },
+      riasecTraits: {
+        realistic: traits.R || 0,
+        investigative: traits.I || 0,
+        artistic: traits.A || 0,
+        social: traits.S || 0,
+        enterprising: traits.E || 0,
+        conventional: traits.C || 0,
+        dominantTraits: sortedTraits.slice(0, 2).map(([trait, score]) => ({
+          trait: RIASEC_LABELS[trait as keyof typeof RIASEC_LABELS],
+          score: score
+        }))
+      },
+      recommendations: {
+        suggestedStreams: suggestedStreams,
+        weakAreas: weakTopics.map(topic => RIASEC_LABELS[topic as keyof typeof RIASEC_LABELS] || topic),
+        nextSteps: forLevel === 'CLASS_10' ? [
+          "Research Science, Commerce, and Arts streams",
+          "Talk to career counselors",
+          "Explore subject combinations",
+          "Consider your interests and strengths"
+        ] : [
+          "Research colleges and courses",
+          "Prepare for entrance exams",
+          "Explore career options in your chosen field",
+          "Connect with professionals in your area of interest"
+        ]
+      }
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(JSON.stringify(llmData, null, 2));
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
@@ -174,6 +228,49 @@ export function ResultSummary({
           </CardContent>
         </Card>
       )}
+
+      {/* LLM JSON Export */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Brain className="h-5 w-5" />
+            AI-Ready Results (JSON Format)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              Your quiz results are formatted for easy integration with AI career counselors and LLM agents.
+            </p>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <pre className="text-xs overflow-x-auto">
+                {JSON.stringify(llmData, null, 2)}
+              </pre>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={copyToClipboard} variant="outline" size="sm">
+                <Copy className="h-4 w-4 mr-2" />
+                Copy JSON
+              </Button>
+              <Button 
+                onClick={() => {
+                  const blob = new Blob([JSON.stringify(llmData, null, 2)], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `quiz-results-${submissionId}.json`;
+                  a.click();
+                }}
+                variant="outline" 
+                size="sm"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Download JSON
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Action Buttons */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

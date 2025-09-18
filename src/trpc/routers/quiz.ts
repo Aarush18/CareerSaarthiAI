@@ -9,7 +9,7 @@ import {
 import { createTRPCRouter, baseProcedure } from "../init";
 import { eq, and, desc } from "drizzle-orm";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { mockQuiz } from "@/db/mock";
+import { mockQuizzes } from "@/db/mock";
 
 // Input validation schemas
 const getActiveQuizInput = z.object({
@@ -127,9 +127,14 @@ export const quizRouter = createTRPCRouter({
         console.log('🔄 Falling back to mock data for development');
         
         // Return mock data for development when database is not available
-        if (input.forLevel === 'ANY') {
-          return mockQuiz;
+        if (input.forLevel === 'CLASS_10') {
+          return mockQuizzes.CLASS_10;
         }
+        if (input.forLevel === 'CLASS_12') {
+          return mockQuizzes.CLASS_12;
+        }
+        // Fallback to CLASS_10 for ANY level
+        return mockQuizzes.CLASS_10;
         
         throw new Error('Database connection failed. Please check your DATABASE_URL environment variable.');
       }
@@ -232,6 +237,8 @@ export const quizRouter = createTRPCRouter({
         console.log('🔄 Falling back to mock submission for development');
         
         // Return mock submission data for development when database is not available
+        // Determine which mock quiz to use based on the quiz ID
+        const mockQuiz = input.quizId.includes('class-10') ? mockQuizzes.CLASS_10 : mockQuizzes.CLASS_12;
         const mockTraits = calculateRIASECTraits(input.answers, mockQuiz.questions);
         const { suggestions, weakTopics } = suggestStreams(mockTraits);
         
@@ -322,6 +329,8 @@ export const quizRouter = createTRPCRouter({
         console.log('🔄 Falling back to mock submission detail for development');
         
         // Return mock submission detail for development
+        // Determine which mock quiz to use based on the submission ID
+        const mockQuiz = input.submissionId.includes('class-10') ? mockQuizzes.CLASS_10 : mockQuizzes.CLASS_12;
         const mockAnswers = mockQuiz.questions.map((q, index) => ({
           id: `mock-answer-${index}`,
           questionId: q.id,

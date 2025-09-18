@@ -121,6 +121,7 @@ export default function QuizResultPage() {
           suggestedStreams={suggestedStreams}
           weakTopics={weakTopics}
           submissionId={submission.id}
+          forLevel={submission.quizId?.includes('class-10') ? 'CLASS_10' : 'CLASS_12'}
         />
       </div>
     </div>
