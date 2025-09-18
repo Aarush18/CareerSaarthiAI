@@ -6,6 +6,10 @@ import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { DashboardSidebar } from "@/modules/dashboard/ui/components/dashboard-sidebar";
+import { DashboardNavbar } from "@/modules/dashboard/ui/components/dashboard-navbar";
+
 export default function Home() {
   const { data: session } = authClient.useSession() 
 
@@ -46,54 +50,59 @@ export default function Home() {
       }
     });
   }
-  
-  if(session){
-    return( 
-      <div className="flex p-4 flex-col gap-y-4">
-        <p>Logged in as {session.user?.name}</p>
-        <Button onClick={()=>authClient.signOut()}>Sign Out</Button>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-col gap-y-10">
-      {/* Signup Form */}
-      <div className="flex p-4 flex-col gap-y-4">
-        <Input 
-          placeholder="name" 
-          value={signupName} 
-          onChange={(e) => setSignupName(e.target.value)} 
-        />
-        <Input 
-          placeholder="email" 
-          value={signupEmail} 
-          onChange={(e) => setSignupEmail(e.target.value)} 
-        />
-        <Input 
-          placeholder="password" 
-          type="password" 
-          value={signupPassword} 
-          onChange={(e) => setSignupPassword(e.target.value)} 
-        />
-        <Button onClick={onSubmit}>Create User</Button>
-      </div>
+    <SidebarProvider>
+      <DashboardSidebar />
+      <SidebarInset>
+        <DashboardNavbar />
+        <div className="flex flex-col gap-y-10">
+          {session ? (
+            <div className="flex p-4 flex-col gap-y-4">
+              <p>Logged in as {session.user?.name}</p>
+              <Button onClick={()=>authClient.signOut()}>Sign Out</Button>
+            </div>
+          ) : (
+            <>
+              {/* Signup Form */}
+              <div className="flex p-4 flex-col gap-y-4">
+                <Input 
+                  placeholder="name" 
+                  value={signupName} 
+                  onChange={(e) => setSignupName(e.target.value)} 
+                />
+                <Input 
+                  placeholder="email" 
+                  value={signupEmail} 
+                  onChange={(e) => setSignupEmail(e.target.value)} 
+                />
+                <Input 
+                  placeholder="password" 
+                  type="password" 
+                  value={signupPassword} 
+                  onChange={(e) => setSignupPassword(e.target.value)} 
+                />
+                <Button onClick={onSubmit}>Create User</Button>
+              </div>
 
-      {/* Login Form */}
-      <div className="flex p-4 flex-col gap-y-4">
-        <Input 
-          placeholder="email" 
-          value={loginEmail} 
-          onChange={(e) => setLoginEmail(e.target.value)} 
-        />
-        <Input 
-          placeholder="password" 
-          type="password" 
-          value={loginPassword} 
-          onChange={(e) => setLoginPassword(e.target.value)} 
-        />
-        <Button onClick={onLogin}>Login</Button>
-      </div>
-    </div>
+              {/* Login Form */}
+              <div className="flex p-4 flex-col gap-y-4">
+                <Input 
+                  placeholder="email" 
+                  value={loginEmail} 
+                  onChange={(e) => setLoginEmail(e.target.value)} 
+                />
+                <Input 
+                  placeholder="password" 
+                  type="password" 
+                  value={loginPassword} 
+                  onChange={(e) => setLoginPassword(e.target.value)} 
+                />
+                <Button onClick={onLogin}>Login</Button>
+              </div>
+            </>
+          )}
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }
