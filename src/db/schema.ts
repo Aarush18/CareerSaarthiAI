@@ -72,4 +72,7 @@ export const agents = pgTable("agents" , {
   instructions: text("instructions").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(), 
-})
+});
+
+// Export quiz schemas
+export * from "./quiz";
