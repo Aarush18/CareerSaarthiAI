@@ -59,7 +59,7 @@ export const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
               alt="logo"
               className="rounded-2xl"
             />
-            <p className="text-2xl font-semibold">Vidu AI</p>
+            <p className="text-2xl font-semibold">Career Saarthi AI</p>
           </Link>
         </SidebarHeader>
         <div className="px-4 py-2">
