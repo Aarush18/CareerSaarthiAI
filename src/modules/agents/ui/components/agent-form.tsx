@@ -24,7 +24,7 @@ export const AgentForm = ({
     onCancel,
     initialValues
 } : AgentFormProps) => {
-    const trpc = useTRPC()
+    const trpc = useTRPC();
     const queryClient = useQueryClient()
     const router = useRouter()
 

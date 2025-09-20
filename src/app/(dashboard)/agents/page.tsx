@@ -2,7 +2,8 @@ import { LoadingState } from "@/components/loading-state";
 import { auth } from "@/lib/auth";
 import ListHeader from "@/modules/agents/ui/components/list-header";
 import { AgentsView } from "@/modules/agents/ui/views/agents-view";
-import { getQueryClient, trpc } from "@/trpc/server";
+import { trpc } from "@/trpc/server";
+import { getQueryClient } from "@/trpc/client";
 import {
   dehydrate,
   HydrationBoundary,
