@@ -1,14 +1,32 @@
 "use client"
 
+import { ErrorState } from "@/components/error-state"
+import { LoadingState } from "@/components/loading-state"
 import { useTRPC } from "@/trpc/client"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query"
 
 export const MeetingView = () => {
     const trpc = useTRPC()
-    const {data} = useQuery(trpc.meetings.getMany.queryOptions({})) 
+    const {data} = useSuspenseQuery(trpc.meetings.getMany.queryOptions({})) 
     return (
         <div>
             {JSON.stringify(data)}
+        </div>
+    )
+}
+
+export const MeetingsViewLoading = () => {
+    return (
+        <div>
+            <LoadingState title="Meetings" description="Loading meetings"/>
+        </div>
+    )
+}
+
+export const MeetingsViewError = () => {
+    return (
+        <div>
+            <ErrorState title="Meetings" description="Error loading meetings"/>
         </div>
     )
 }

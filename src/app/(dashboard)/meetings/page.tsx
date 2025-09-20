@@ -1,9 +1,24 @@
-import { MeetingView } from "@/modules/meetings/ui/meetings-view";
+import { MeetingsViewError, MeetingsViewLoading, MeetingView } from "@/modules/meetings/ui/meetings-view";
+import { getQueryClient, trpc } from "@/trpc/server";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { ErrorBoundary } from "react-error-boundary";
+
+import { Suspense } from "react";
 
 const Page = () => {
-    return (
-      <MeetingView/>
-    )
+  const queryClient = getQueryClient();
+  void queryClient.prefetchQuery(trpc.meetings.getMany.queryOptions({}))
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Suspense fallback={<MeetingsViewLoading/>}>
+        <ErrorBoundary fallback={<MeetingsViewError/>} >
+          <MeetingView />
+        </ErrorBoundary>
+      </Suspense>
+    </HydrationBoundary>
+  )
 }
 
 export default Page;
+
+

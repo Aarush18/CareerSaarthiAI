@@ -50,6 +50,12 @@ export const meetingsRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const { page, pageSize, search } = input;
+
+      // The below comment is only for testing purposes . No need to uncomment that . Period .
+      // throw new TRPCError({
+      //   code : "BAD_REQUEST",
+      //   message: "something went wrong"
+      // }). 
       
       const data = await db
         .select({
