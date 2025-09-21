@@ -1,3 +1,5 @@
+"use client";
+
 import { trpc } from "@/trpc/client";
 import { AgentGetOne } from "../../types";
 import { useForm } from "react-hook-form";
@@ -10,8 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useQueryClient } from "node_modules/@tanstack/react-query/build/modern/QueryClientProvider";
-import { useRouter } from "next/router";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation"; // ✅ App Router hook
 
 interface AgentFormProps {
   onSuccess?: () => void;

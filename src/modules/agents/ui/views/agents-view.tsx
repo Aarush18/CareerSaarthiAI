@@ -7,16 +7,24 @@ import { EmptyState } from "@/components/empty-state";
 import { useAgentsFilter } from "../../hooks/use-agents-filters";
 import { set } from "zod";
 import { DataPagination } from "../components/data-pagination";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { LoadingState } from "@/components/loading-state";
+import { ErrorState } from "@/components/error-state";
+
+
 
 export const AgentsView = () => {
+    const router = useRouter();
     const [filters, setFilters] = useAgentsFilter();
-    const [data] = trpc.agents.getMany.useSuspenseQuery({});
+    const [data] = trpc.agents.getMany.useSuspenseQuery({...filters});
 
-    return (
+      return (
         <div className="flex-1 pb-4 px-4 md:px-8 flex flex-col gap-y-4">
           
-            <DataTable data={data.items} columns={columns}/>
+            <DataTable data={data.items} columns={columns}
+            onRowClick={(row)=>router.push(`/agents/${row.id}`)}
+            
+            />
             <DataPagination 
             page={filters.page}
             totalPages={data.totalPages}
@@ -28,5 +36,20 @@ export const AgentsView = () => {
             )}
 
             </div>
+    )
+}
+
+export const AgentsViewLoading = ()=>{
+    return(
+        <LoadingState title="Loading" description="This may take a few seconds"/>
+    
+    )
+}
+
+
+export const AgentsViewError = ()=>{
+    return(
+        <ErrorState title="Error Loading Agents" description="Something went wrong"/>
+    
     )
 }
