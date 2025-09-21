@@ -14,15 +14,19 @@ export default function QuizResultPage() {
   const searchParams = useSearchParams();
   const submissionId = searchParams.get("submissionId");
 
-  const { data: submission, isLoading, error, refetch } = trpc.quiz.getSubmissionDetail.useQuery(
-    { submissionId: submissionId! },
-    { enabled: !!submissionId }
-  );
+  const { data: submission, isLoading, error, refetch } =
+    trpc.quiz.getSubmissionDetail.useQuery(
+      { submissionId: submissionId! },
+      { enabled: !!submissionId }
+    );
 
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <LoadingState />
+        <LoadingState
+          title="Loading quizzes"
+          description="Please wait while we load your quiz results."
+        />
       </div>
     );
   }
@@ -30,24 +34,24 @@ export default function QuizResultPage() {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <ErrorState 
-          title="Failed to load results"
-          description="There was an error loading your quiz results. Please try again."
-          action={
-            <div className="space-y-2">
-              <Button onClick={() => refetch()} variant="outline">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Try Again
-              </Button>
-              <Button asChild variant="ghost">
-                <Link href="/quiz">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Quiz
-                </Link>
-              </Button>
-            </div>
-          }
-        />
+        <div className="space-y-4">
+          <ErrorState
+            title="Failed to load results"
+            description="There was an error loading your quiz results. Please try again."
+          />
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button onClick={() => refetch()} variant="outline">
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Try Again
+            </Button>
+            <Button asChild variant="ghost">
+              <Link href="/quiz">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Quiz
+              </Link>
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -81,32 +85,21 @@ export default function QuizResultPage() {
     );
   }
 
-  // Calculate max possible score for objective questions
-  const objectiveAnswers = submission.answers.filter(answer => answer.isCorrect !== null);
+  const objectiveAnswers = submission.answers.filter(a => a.isCorrect !== null);
   const maxScore = objectiveAnswers.length;
 
-  // Generate stream suggestions and weak topics from traits
   const traits = submission.rawTraits || {};
-  const sortedTraits = Object.entries(traits).sort(([,a], [,b]) => b - a);
+  const sortedTraits = Object.entries(traits).sort(([, a], [, b]) => b - a);
   const topTraits = sortedTraits.slice(0, 2);
-  
+
   const suggestedStreams: string[] = [];
   const weakTopics: string[] = [];
-  
-  // Simple rule-based suggestions
+
   if (topTraits.length > 0) {
     const [topTrait] = topTraits;
-    if (topTrait[0] === 'I' || topTrait[0] === 'R') {
-      suggestedStreams.push('SCIENCE');
-    }
-    if (topTrait[0] === 'C' || topTrait[0] === 'E') {
-      suggestedStreams.push('COMMERCE');
-    }
-    if (topTrait[0] === 'A' || topTrait[0] === 'S') {
-      suggestedStreams.push('ARTS');
-    }
-    
-    // Add weak topics (lowest scoring traits)
+    if (topTrait[0] === "I" || topTrait[0] === "R") suggestedStreams.push("SCIENCE");
+    if (topTrait[0] === "C" || topTrait[0] === "E") suggestedStreams.push("COMMERCE");
+    if (topTrait[0] === "A" || topTrait[0] === "S") suggestedStreams.push("ARTS");
     const weakTraits = sortedTraits.slice(-2).map(([trait]) => trait);
     weakTopics.push(...weakTraits);
   }
@@ -121,6 +114,7 @@ export default function QuizResultPage() {
           suggestedStreams={suggestedStreams}
           weakTopics={weakTopics}
           submissionId={submission.id}
+          forLevel={submission.quizId?.includes("class-10") ? "CLASS_10" : "CLASS_12"}
         />
       </div>
     </div>

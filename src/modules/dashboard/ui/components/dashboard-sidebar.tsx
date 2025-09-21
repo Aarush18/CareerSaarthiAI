@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { BotIcon, StarIcon, VideoIcon } from "lucide-react";
+import { BotIcon, StarIcon, VideoIcon, Brain } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,6 +29,11 @@ const firstSection = () => [
     icon: BotIcon,
     label: "Agents",
     href: "/agents",
+  },
+  {
+    icon: Brain,
+    label: "Aptitude Quiz",
+    href: "/quiz",
   },
 ];
 
@@ -59,7 +64,7 @@ export const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
               alt="logo"
               className="rounded-2xl"
             />
-            <p className="text-2xl font-semibold">Vidu AI</p>
+            <p className="text-2xl font-semibold"> Career Saarthi AI</p>
           </Link>
         </SidebarHeader>
         <div className="px-4 py-2">

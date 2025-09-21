@@ -1,7 +1,7 @@
 import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
 import { nanoid } from "nanoid";
-import test from "node:test";
 
+// ------------------------------ user ------------------------------
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull().default("Anonymous"),
@@ -15,6 +15,7 @@ export const user = pgTable("user", {
     .notNull(),
 });
 
+// ----------------------------- session ----------------------------
 export const session = pgTable("session", {
   id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
@@ -30,6 +31,7 @@ export const session = pgTable("session", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
+// ----------------------------- account ----------------------------
 export const account = pgTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
@@ -50,6 +52,7 @@ export const account = pgTable("account", {
     .notNull(),
 });
 
+// --------------------------- verification -------------------------
 export const verification = pgTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
@@ -62,6 +65,7 @@ export const verification = pgTable("verification", {
     .notNull(),
 });
 
+// ------------------------------ agents ----------------------------
 export const agents = pgTable("agents", {
   id: text("id")
     .primaryKey()
@@ -75,6 +79,10 @@ export const agents = pgTable("agents", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// ----------------------------- quiz export ------------------------
+export * from "./quiz";
+
+// --------------------------- meetings enum ------------------------
 export const meetingStatus = pgEnum("meeting_status", [
   "upcoming",
   "active",
@@ -83,6 +91,7 @@ export const meetingStatus = pgEnum("meeting_status", [
   "cancelled",
 ]);
 
+// ----------------------------- meetings ---------------------------
 export const meetings = pgTable("meetings", {
   id: text("id")
     .primaryKey()
@@ -90,7 +99,7 @@ export const meetings = pgTable("meetings", {
   name: text("name").notNull(),
   userId: text("user_id")
     .notNull()
-    .references(() => user.id , {onDelete : "cascade"}),
+    .references(() => user.id , { onDelete : "cascade" }),
   agentId: text("agent_id")
     .notNull()
     .references(() => agents.id, { onDelete: "cascade" }),
