@@ -3,10 +3,17 @@
 import { trpc } from "@/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { CommandSelect } from "@/components/command-select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { GeneratedAvatar } from "@/components/generated-avatar";
 import { Input } from "@/components/ui/input";
+import { CommandSelect } from "@/components/command-select";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
@@ -26,17 +33,16 @@ export const MeetingForm = ({
   onCancel,
   initialValues,
 }: MeetingFormProps) => {
-  const utils = trpc.useUtils(); // ✅ invalidate helper
+  const utils = trpc.useUtils();
 
   const [agentSearch, setAgentSearch] = useState("");
 
-  // ✅ Hooks client -> useQuery directly (no queryOptions here)
+  // tRPC hooks client — suspense off, plain query
   const agents = trpc.agents.getMany.useQuery({
     pageSize: 100,
     search: agentSearch,
   });
 
-  // ✅ Hooks client -> useMutation directly
   const createMeeting = trpc.meetings.create.useMutation({
     onSuccess: async (data) => {
       await utils.meetings.getMany.invalidate({});
@@ -89,7 +95,7 @@ export const MeetingForm = ({
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="e.g Math Consultations" />
+                <Input {...field} placeholder="e.g. Math Consultations" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -104,14 +110,14 @@ export const MeetingForm = ({
               <FormLabel>Agent</FormLabel>
               <FormControl>
                 <CommandSelect
-                  value={field.value}
+                  value={field.value ?? ""}
                   onSelect={(val) => field.onChange(val)}
                   onSearch={(val) => setAgentSearch(val)}
-                  placeholder="Search agent…"
+                  placeholder="Select an agent…"
                   options={(agents.data?.items ?? []).map((agent) => ({
                     id: agent.id,
                     value: agent.id,
-                    label: agent.name, // visible text for the row/input
+                    label: agent.name, // visible text + helps search
                     children: (
                       <div className="flex items-center gap-x-2">
                         <GeneratedAvatar

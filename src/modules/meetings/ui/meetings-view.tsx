@@ -5,12 +5,13 @@ import { LoadingState } from "@/components/loading-state";
 import { trpc } from "@/trpc/client";
 
 export const MeetingView = () => {
-  // ✅ tRPC hook + suspense enabled (no queryOptions here)
-  const { data } = trpc.meetings.getMany.useQuery({}, { suspense: true });
-
-  // `data` is guaranteed here (because suspense)
-  return <div>{JSON.stringify(data)}</div>;
-};
+   const { data } = trpc.meetings.getMany.useQuery({}, { suspense: true });
+    return (
+        <div className="overflow-x-scroll">
+            {JSON.stringify(data)}
+        </div>
+    )
+}
 
 export const MeetingsViewLoading = () => (
   <div>
