@@ -1,26 +1,14 @@
-// src/trpc/server.ts
-
-import "server-only";
-import { headers } from "next/headers";
-import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
-import { type AppRouter } from "@/trpc/routers/_app"; // Adjust path if needed
-
-const getUrl = () => {
-  if (typeof window !== "undefined") return ""; 
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return `http://localhost:${process.env.PORT ?? 3000}`;
-};
-
-export const trpc = createTRPCProxyClient<AppRouter>({
-  links: [
-    httpBatchLink({
-      url: getUrl(),
-      headers() {
-        return {
-          ...Object.fromEntries(headers()),
-          "x-trpc-source": "rsc",
-        };
-      },
-    }),
-  ],
+import 'server-only'; // <-- ensure this file cannot be imported from the client
+import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
+import { cache } from 'react';
+import { createTRPCContext } from './init';
+import { makeQueryClient } from './query-client';
+import { appRouter } from './routers/_app';
+// IMPORTANT: Create a stable getter for the query client that
+//            will return the same client during the same request.
+export const getQueryClient = cache(makeQueryClient);
+export const trpc = createTRPCOptionsProxy({
+  ctx: createTRPCContext,
+  router: appRouter,
+  queryClient: getQueryClient,
 });
