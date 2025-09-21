@@ -7,10 +7,12 @@ import { httpBatchLink } from '@trpc/client';
 import { useState } from 'react';
 import { makeQueryClient } from './query-client';
 import type { AppRouter } from './routers/_app';
+import { createTRPCContext } from './init';
 
 export const trpc = createTRPCReact<AppRouter>();
+
 let browserQueryClient: QueryClient;
-function getQueryClient() {
+export function getQueryClient() {
   if (typeof window === 'undefined') {
     // Server: always make a new query client
     return makeQueryClient();

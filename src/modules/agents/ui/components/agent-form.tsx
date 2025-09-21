@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useQueryClient } from "node_modules/@tanstack/react-query/build/modern/QueryClientProvider";
+import { useRouter } from "next/router";
 
 interface AgentFormProps {
   onSuccess?: () => void;
@@ -18,11 +20,13 @@ interface AgentFormProps {
 }
 
 export const AgentForm = ({
-  onSuccess,
-  onCancel,
-  initialValues,
-}: AgentFormProps) => {
-  const utils = trpc.useUtils();
+    onSuccess,
+    onCancel,
+    initialValues
+} : AgentFormProps) => {
+    const queryClient = useQueryClient()
+    const router = useRouter()
+    const utils = trpc.useUtils()
 
   const createAgent = trpc.agents.create.useMutation({
     onSuccess: async () => {

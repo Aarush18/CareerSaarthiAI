@@ -1,5 +1,6 @@
 import { LoadingState } from "@/components/loading-state";
 import { auth } from "@/lib/auth";
+import { loadSearchParams } from "@/modules/agents/params";
 import ListHeader from "@/modules/agents/ui/components/list-header";
 import { AgentsView } from "@/modules/agents/ui/views/agents-view";
 import { getQueryClient, trpc } from "@/trpc/server";
@@ -18,7 +19,7 @@ interface Props {
 }
 
 const Page = async({searchParams}:Props) => {
-  // const filters = await loadSearchParams(searchParams);
+  const filters = await loadSearchParams(searchParams);
 
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -28,7 +29,7 @@ const Page = async({searchParams}:Props) => {
     redirect("/auth/sign-in")
   }
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(trpc.agents.getMany.queryOptions({}));
+  void queryClient.prefetchQuery(trpc.agents.getMany.queryOptions({...filters}));
   return (
     <>
      <ListHeader/>
