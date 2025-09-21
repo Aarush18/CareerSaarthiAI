@@ -1,6 +1,7 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
-import {nanoid} from "nanoid"
+import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
+import { nanoid } from "nanoid";
 
+// ------------------------------ user ------------------------------
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull().default("Anonymous"),
@@ -14,6 +15,7 @@ export const user = pgTable("user", {
     .notNull(),
 });
 
+// ----------------------------- session ----------------------------
 export const session = pgTable("session", {
   id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
@@ -29,6 +31,7 @@ export const session = pgTable("session", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
+// ----------------------------- account ----------------------------
 export const account = pgTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
@@ -49,6 +52,7 @@ export const account = pgTable("account", {
     .notNull(),
 });
 
+// --------------------------- verification -------------------------
 export const verification = pgTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
@@ -61,7 +65,8 @@ export const verification = pgTable("verification", {
     .notNull(),
 });
 
-export const agents = pgTable("agents" , {
+// ------------------------------ agents ----------------------------
+export const agents = pgTable("agents", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => nanoid()),
@@ -71,8 +76,39 @@ export const agents = pgTable("agents" , {
     .references(() => user.id),
   instructions: text("instructions").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(), 
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-// Export quiz schemas
+// ----------------------------- quiz export ------------------------
 export * from "./quiz";
+
+// --------------------------- meetings enum ------------------------
+export const meetingStatus = pgEnum("meeting_status", [
+  "upcoming",
+  "active",
+  "completed",
+  "processing",
+  "cancelled",
+]);
+
+// ----------------------------- meetings ---------------------------
+export const meetings = pgTable("meetings", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => nanoid()),
+  name: text("name").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id , { onDelete : "cascade" }),
+  agentId: text("agent_id")
+    .notNull()
+    .references(() => agents.id, { onDelete: "cascade" }),
+  status: meetingStatus("status").notNull().default("upcoming"),
+  startedAt: timestamp("started_at"),
+  endedAt: timestamp("ended_at"),
+  trancsciptUrl: text("transcript_url"),
+  recordingUrl: text("recording_url"),
+  summary: text("summary"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
