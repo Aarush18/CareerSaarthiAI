@@ -47,6 +47,11 @@ export const CommandSelect = ({
     [options, value]
   );
 
+  const handleOpenChange = (open : boolean) => {
+    onSearch?.("");
+    setOpen(open);
+  }
+
   return (
     <>
       <Button
@@ -70,7 +75,7 @@ export const CommandSelect = ({
 
       <CommandResponsiveDialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={handleOpenChange}
         shouldFilter={!onSearch} // if you supply onSearch, dialog won't double-filter
       >
         <CommandRoot>
