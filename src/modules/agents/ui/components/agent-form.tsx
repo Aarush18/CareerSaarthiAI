@@ -53,13 +53,26 @@ export const AgentForm = ({
     },
   });
 
+
+
+const updateAgent = trpc.agents.update.useMutation({
+  onSuccess: async (updated) => {
+    // refresh list + the specific agent cache
+    await utils.agents.getMany.invalidate();
+    if (updated?.id) await utils.agents.getOne.invalidate({ id: updated.id });
+    toast.success("Agent updated");
+  },
+  onError: (e) => toast.error(e.message),
+});
+
   const isEdit = !!initialValues?.id;
-  const isPending = createAgent.isPending;
+  const isPending = createAgent.isPending||updateAgent.isPending;
 
   const onSubmit = (values: z.infer<typeof agentsInsertSchema>) => {
     if (isEdit) {
       // TODO: wire up update mutation when available:
       // trpc.agents.update.useMutation({...}).mutate({ id: initialValues.id, ...values })
+      updateAgent.mutate({...values,id:initialValues.id})
       console.log("TODO: Update Agent", { id: initialValues?.id, ...values });
     } else {
       createAgent.mutate(values);

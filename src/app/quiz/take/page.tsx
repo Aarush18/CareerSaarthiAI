@@ -63,7 +63,10 @@ export default function TakeQuizPage() {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <LoadingState />
+        <LoadingState 
+          title="Loading Quiz"
+          description="Please wait while we load your quiz..."
+        />
       </div>
     );
   }
