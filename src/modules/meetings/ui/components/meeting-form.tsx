@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,6 +22,7 @@ import z from "zod";
 
 import { MeetingGetOne } from "../../types";
 import { meetingsInsertSchema } from "../../schemas";
+import { NewAgentDialog } from "@/modules/agents/ui/components/new-agent-dialog";
 
 interface MeetingFormProps {
   onSuccess?: (id?: string) => void;
@@ -34,6 +36,8 @@ export const MeetingForm = ({
   initialValues,
 }: MeetingFormProps) => {
   const utils = trpc.useUtils();
+
+  const [openAgentDialog , setOpenAgentDialog] = useState(false);
 
   const [agentSearch, setAgentSearch] = useState("");
 
@@ -86,6 +90,11 @@ export const MeetingForm = ({
   };
 
   return (
+    <>
+    <NewAgentDialog
+      open={openAgentDialog}
+      onOpenChangeAction={() => setOpenAgentDialog(false)}
+    />
     <Form {...form}>
       <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
@@ -131,6 +140,12 @@ export const MeetingForm = ({
                   }))}
                 />
               </FormControl>
+              <FormDescription>
+                Not found what you&apos;re looking for? {""}
+                <button type="button" onClick={() => setOpenAgentDialog(true)} className="text-primary hover:underline ml-1">
+                  Create a new agent
+                </button>
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -153,5 +168,6 @@ export const MeetingForm = ({
         </div>
       </form>
     </Form>
+    </>
   );
 };
