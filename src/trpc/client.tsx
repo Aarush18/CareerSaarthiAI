@@ -1,61 +1,44 @@
-'use client';
-// ^-- to make sure we can mount the Provider from a server component
-import type { QueryClient } from '@tanstack/react-query';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { createTRPCReact } from '@trpc/react-query';
-import { httpBatchLink } from '@trpc/client';
-import { useState } from 'react';
-import { makeQueryClient } from './query-client';
-import type { AppRouter } from './routers/_app';
-import { createTRPCContext } from './init';
+"use client";
+
+import { httpBatchLink } from "@trpc/client";
+import { createTRPCReact } from "@trpc/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
+
+import type { AppRouter } from "./routers/_app";
+import { makeQueryClient } from "./query-client";
 
 export const trpc = createTRPCReact<AppRouter>();
 
-let browserQueryClient: QueryClient;
+let browserQueryClient: QueryClient | undefined;
+
 export function getQueryClient() {
-  if (typeof window === 'undefined') {
-    // Server: always make a new query client
+  if (typeof window === "undefined") {
+    // server: always new client
     return makeQueryClient();
   }
-  // Browser: make a new query client if we don't already have one
-  // This is very important, so we don't re-make a new client if React
-  // suspends during the initial render. This may not be needed if we
-  // have a suspense boundary BELOW the creation of the query client
+  // client: keep a singleton
   if (!browserQueryClient) browserQueryClient = makeQueryClient();
   return browserQueryClient;
 }
+
 function getUrl() {
-  const base = (() => {
-    if (typeof window !== 'undefined') return '';
-    return process.env.NEXT_PUBLIC_APP_URL;
-  })();
+  const base = typeof window !== "undefined" ? "" : process.env.NEXT_PUBLIC_APP_URL;
   return `${base}/api/trpc`;
 }
-export function TRPCReactProvider(
-  props: Readonly<{
-    children: React.ReactNode;
-  }>,
-) {
-  // NOTE: Avoid useState when initializing the query client if you don't
-  //       have a suspense boundary between this and the code that may
-  //       suspend because React will throw away the client on the initial
-  //       render if it suspends and there is no boundary
+
+export function TRPCReactProvider({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
+
   const [trpcClient] = useState(() =>
     trpc.createClient({
-      links: [
-        httpBatchLink({
-          // transformer: superjson, <-- if you use a data transformer
-          url: getUrl(),
-        }),
-      ],
-    }),
+      links: [httpBatchLink({ url: getUrl() })],
+    })
   );
+
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        {props.children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </trpc.Provider>
   );
 }
