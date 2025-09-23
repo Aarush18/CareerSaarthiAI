@@ -64,7 +64,7 @@ export function JsonQuestionStepper({ questions, onComplete, isLoading = false }
       <Card className="border-0 shadow-lg">
         <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-bold">EduGuideAI</CardTitle>
+            <CardTitle className="text-xl font-bold">CareerSaarthiAI</CardTitle>
             <Brain className="h-8 w-8 text-white" />
           </div>
         </CardHeader>

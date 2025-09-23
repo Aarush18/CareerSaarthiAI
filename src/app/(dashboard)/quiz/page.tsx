@@ -28,7 +28,6 @@ export default function QuizPage() {
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-6">
               <Brain className="h-12 w-12 text-green-600" />
-              <h1 className="text-5xl font-bold text-gray-900">Runtime Terror</h1>
             </div>
             <h2 className="text-3xl font-semibold text-gray-800 mb-4">
               Tell us where you are right now
@@ -71,7 +70,7 @@ export default function QuizPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-gray-500">
                       <BookOpen className="h-4 w-4" />
-                      <span>15-20 questions</span>
+                      <span>25-35 questions</span>
                     </div>
                     <Button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2">
                       Start Quiz
@@ -112,7 +111,7 @@ export default function QuizPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-gray-500">
                       <BookOpen className="h-4 w-4" />
-                      <span>20-25 questions</span>
+                      <span>25-35 questions</span>
                     </div>
                     <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2">
                       Start Quiz
@@ -158,7 +157,7 @@ export default function QuizPage() {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <LoadingState />
+        <LoadingState title="Loading Quiz" description="Please wait while we load your quiz..."/>
       </div>
     );
   }
@@ -229,7 +228,7 @@ export default function QuizPage() {
           title={quiz.title}
           description={quiz.description}
           forLevel={quiz.forLevel}
-          questionCount={quiz.questions.length}
+          questionCount={32}
           quizId={quiz.id}
         />
 
@@ -252,3 +251,5 @@ export default function QuizPage() {
     </div>
   );
 }
+
+

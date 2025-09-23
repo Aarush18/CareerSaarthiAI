@@ -2,7 +2,7 @@
   "quizzes": [
     {
       "class": "10",
-      "title": "EduGuideAI — Class 10 Stream & Career Orientation",
+      "title": "CareerSaarthiAI — Class 10 Stream & Career Orientation",
       "questions": [
         {
           "id": 1,
@@ -62,7 +62,7 @@
     },
     {
       "class": "12",
-      "title": "EduGuideAI — Class 12 Degree, College & Career Path",
+      "title": "CareerSaarthiAI — Class 12 Stream & Career Orientation",
       "questions": [
         { "id": 1, "question": "Which stream did you choose in Class 11–12?", "type": "mcq", "options": [ { "text": "Science (PCM)", "score": { "I": 2, "R": 1 } }, { "text": "Science (PCB)", "score": { "I": 2, "S": 1 } }, { "text": "Commerce", "score": { "E": 2, "C": 1 } }, { "text": "Arts/Humanities", "score": { "A": 2, "S": 1 } }, { "text": "Vocational/Other", "score": { "R": 2 } } ] },
         { "id": 2, "question": "Why did you choose this stream?", "type": "mcq", "options": [ { "text": "Personal interest", "score": { "A": 1, "I": 1 } }, { "text": "Parental advice", "score": { } }, { "text": "Teacher guidance", "score": { } }, { "text": "Peer influence", "score": { } }, { "text": "Job prospects", "score": { "E": 1 } } ] },
