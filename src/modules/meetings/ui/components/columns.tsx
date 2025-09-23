@@ -6,8 +6,7 @@ import { GeneratedAvatar } from "@/components/generated-avatar"
 import { VideoIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
-import humanizeDuration from "humanize-duration"
-import { cn } from "@/lib/utils"
+import { cn,formatDuration } from "@/lib/utils"
 import {
     CircleCheckIcon,
     CircleXIcon,
@@ -20,13 +19,6 @@ import {
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-function formatDuration(seconds: number) {
-    return humanizeDuration(seconds * 1000, {
-        largest: 1,
-        round: true,
-        units: ["h", "m", "s"],
-    });
-}
 
 const statusIconMap = {
     upcoming: ClockArrowUpIcon,
