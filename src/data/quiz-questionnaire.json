@@ -1,0 +1,133 @@
+{
+  "quizzes": [
+    {
+      "class": "10",
+      "title": "EduGuideAI — Class 10 Stream & Career Orientation",
+      "questions": [
+        {
+          "id": 1,
+          "question": "Which of these activities do you enjoy most?",
+          "type": "mcq",
+          "options": [
+            { "text": "Solving puzzles", "score": { "I": 2, "R": 1 } },
+            { "text": "Drawing/Designing", "score": { "A": 2 } },
+            { "text": "Leading a group project", "score": { "E": 2 } },
+            { "text": "Helping others", "score": { "S": 2 } },
+            { "text": "Working with gadgets/machines", "score": { "R": 2 } }
+          ]
+        },
+        { "id": 2, "question": "Which school subject do you find most engaging?", "type": "mcq", "options": [ { "text": "Mathematics", "score": { "R": 1, "I": 2 } }, { "text": "Science (Physics/Chemistry/Biology)", "score": { "I": 2, "R": 1 } }, { "text": "Languages", "score": { "A": 1, "S": 1 } }, { "text": "Social Studies", "score": { "S": 1, "C": 1 } }, { "text": "Computer Science", "score": { "R": 1, "I": 2 } } ] },
+        { "id": 3, "question": "When working in a team, you usually:", "type": "mcq", "options": [ { "text": "Take the lead", "score": { "E": 2 } }, { "text": "Do research/analysis", "score": { "I": 2 } }, { "text": "Handle creative parts", "score": { "A": 2 } }, { "text": "Support and help everyone", "score": { "S": 2 } }, { "text": "Focus on technical tasks", "score": { "R": 2 } } ] },
+        { "id": 4, "question": "How comfortable are you with speaking in front of people?", "type": "mcq", "options": [ { "text": "Very comfortable", "score": { "E": 2 } }, { "text": "Somewhat comfortable", "score": { "E": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Uncomfortable", "score": { } }, { "text": "Very uncomfortable", "score": { } } ] },
+        { "id": 5, "question": "What type of problems do you like solving most?", "type": "mcq", "options": [ { "text": "Logical/mathematical", "score": { "I": 2 } }, { "text": "Scientific/technical", "score": { "R": 1, "I": 2 } }, { "text": "Creative/visual", "score": { "A": 2 } }, { "text": "Social/human issues", "score": { "S": 2 } }, { "text": "Organizational/management", "score": { "E": 2, "C": 1 } } ] },
+        { "id": 6, "question": "Do you prefer structured tasks with clear steps or open-ended challenges?", "type": "mcq", "options": [ { "text": "Strongly structured", "score": { "C": 2 } }, { "text": "Slightly structured", "score": { "C": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Slightly open-ended", "score": { "A": 1 } }, { "text": "Strongly open-ended", "score": { "A": 2 } } ] },
+        { "id": 7, "question": "If you could choose a career right now, what excites you most?", "type": "open" },
+        { "id": 8, "question": "Rate your confidence in Mathematics (1 = very low, 5 = very high).", "type": "mcq", "options": [ { "text": "1", "score": { } }, { "text": "2", "score": { "I": 1 } }, { "text": "3", "score": { "I": 1 } }, { "text": "4", "score": { "I": 2 } }, { "text": "5", "score": { "I": 3 } } ] },
+        { "id": 9, "question": "Rate your confidence in Science (1 = very low, 5 = very high).", "type": "mcq", "options": [ { "text": "1", "score": { } }, { "text": "2", "score": { "I": 1 } }, { "text": "3", "score": { "I": 1 } }, { "text": "4", "score": { "I": 2 } }, { "text": "5", "score": { "I": 3 } } ] },
+        { "id": 10, "question": "Rate your confidence in Language/Communication (1 = very low, 5 = very high).", "type": "mcq", "options": [ { "text": "1", "score": { } }, { "text": "2", "score": { "S": 1 } }, { "text": "3", "score": { "S": 1, "A": 1 } }, { "text": "4", "score": { "S": 2, "A": 1 } }, { "text": "5", "score": { "S": 2, "A": 2 } } ] },
+        { "id": 11, "question": "Rate your confidence in Arts/Creativity (1 = very low, 5 = very high).", "type": "mcq", "options": [ { "text": "1", "score": { } }, { "text": "2", "score": { "A": 1 } }, { "text": "3", "score": { "A": 1 } }, { "text": "4", "score": { "A": 2 } }, { "text": "5", "score": { "A": 3 } } ] },
+        { "id": 12, "question": "Which exam-type do you usually perform best in?", "type": "mcq", "options": [ { "text": "Application-based", "score": { "R": 1, "I": 1 } }, { "text": "Memorization", "score": { "C": 2 } }, { "text": "Analytical/Logic", "score": { "I": 2, "R": 1 } }, { "text": "Creative/Essay", "score": { "A": 2, "S": 1 } } ] },
+        { "id": 13, "question": "In group projects, you prefer to…", "type": "mcq", "options": [ { "text": "Lead the team", "score": { "E": 2 } }, { "text": "Do research", "score": { "I": 2 } }, { "text": "Handle creative parts", "score": { "A": 2 } }, { "text": "Support everyone", "score": { "S": 2 } }, { "text": "Focus on technical tasks", "score": { "R": 2 } } ] },
+        { "id": 14, "question": "I enjoy taking initiative in…", "type": "mcq", "options": [ { "text": "Planning events", "score": { "E": 2 } }, { "text": "Starting a project", "score": { "E": 2 } }, { "text": "Helping classmates", "score": { "S": 2 } }, { "text": "Creative work", "score": { "A": 2 } }, { "text": "Technical problem-solving", "score": { "R": 2 } } ] },
+        { "id": 15, "question": "I prefer working…", "type": "mcq", "options": [ { "text": "Alone", "score": { "I": 1, "A": 1 } }, { "text": "In pairs", "score": { "S": 1 } }, { "text": "In small groups", "score": { "S": 1, "E": 1 } }, { "text": "In large teams", "score": { "E": 2 } }, { "text": "Depends on task", "score": { } } ] },
+        { "id": 16, "question": "When making decisions, I…", "type": "mcq", "options": [ { "text": "Think carefully", "score": { "C": 2 } }, { "text": "Decide quickly", "score": { "E": 2 } }, { "text": "Ask for advice", "score": { "S": 2 } }, { "text": "Follow rules", "score": { "C": 2 } }, { "text": "Take risks", "score": { "E": 2 } } ] },
+        { "id": 17, "question": "I enjoy creative activities such as…", "type": "mcq", "options": [ { "text": "Drawing/painting", "score": { "A": 2 } }, { "text": "Writing stories", "score": { "A": 2 } }, { "text": "Music", "score": { "A": 2 } }, { "text": "Designing", "score": { "A": 2 } }, { "text": "Crafts", "score": { "A": 2 } } ] },
+        { "id": 18, "question": "I like structured tasks that…", "type": "mcq", "options": [ { "text": "Have clear rules", "score": { "C": 2 } }, { "text": "Require precision", "score": { "C": 2 } }, { "text": "Follow step-by-step instructions", "score": { "C": 2 } }, { "text": "Include deadlines", "score": { "C": 1 } }, { "text": "Require organization", "score": { "C": 2 } } ] },
+        { "id": 19, "question": "My parents/teachers suggest I should choose…", "type": "mcq", "options": [ { "text": "Science", "score": { } }, { "text": "Commerce", "score": { } }, { "text": "Arts", "score": { } }, { "text": "Vocational", "score": { } }, { "text": "Not sure", "score": { } } ] },
+        { "id": 20, "question": "What matters most to you in a career?", "type": "mcq", "options": [ { "text": "Stability/Security", "score": { "C": 1 } }, { "text": "High income", "score": { "E": 2 } }, { "text": "Creativity/Passion", "score": { "A": 2 } }, { "text": "Social impact", "score": { "S": 2 } }, { "text": "Recognition", "score": { "E": 1 } } ] },
+        { "id": 21, "question": "Are you aware of government colleges in your area?", "type": "mcq", "options": [ { "text": "Yes, several", "score": { } }, { "text": "Yes, a few", "score": { } }, { "text": "Heard of one", "score": { } }, { "text": "Not aware", "score": { } }, { "text": "Not interested", "score": { } } ] },
+        { "id": 22, "question": "Do financial considerations influence your career choice?", "type": "mcq", "options": [ { "text": "Very much", "score": { } }, { "text": "Somewhat", "score": { } }, { "text": "Neutral", "score": { } }, { "text": "Slightly", "score": { } }, { "text": "Not at all", "score": { } } ] },
+        { "id": 23, "question": "Which career cluster excites you most?", "type": "mcq", "options": [ { "text": "STEM (Tech/Science/Engineering)", "score": { "I": 2, "R": 1 } }, { "text": "Business/Commerce", "score": { "E": 2, "C": 1 } }, { "text": "Arts/Media", "score": { "A": 2 } }, { "text": "Social/Teaching", "score": { "S": 2 } }, { "text": "Vocational/Skilled Trade", "score": { "R": 2 } } ] },
+        { "id": 24, "question": "If you could work with a professional for a week, whom would you choose?", "type": "open" },
+        { "id": 25, "question": "Which professionals do you admire most, and why?", "type": "open" },
+        { "id": 26, "question": "Where do you see yourself after Class 12?", "type": "mcq", "options": [ { "text": "Higher studies", "score": { } }, { "text": "Job", "score": { } }, { "text": "Family business/Entrepreneurship", "score": { "E": 1 } }, { "text": "Not sure", "score": { } }, { "text": "Other", "score": { } } ] },
+        { "id": 27, "question": "Would you prefer to study in your city/state or move away?", "type": "mcq", "options": [ { "text": "Stay in city", "score": { } }, { "text": "Move to another city", "score": { } }, { "text": "Move to another state", "score": { } }, { "text": "Move abroad", "score": { } }, { "text": "Not sure", "score": { } } ] },
+        { "id": 28, "question": "How important is parental guidance in choosing your career?", "type": "mcq", "options": [ { "text": "Very important", "score": { } }, { "text": "Important", "score": { } }, { "text": "Neutral", "score": { } }, { "text": "Less important", "score": { } }, { "text": "Not important", "score": { } } ] },
+        { "id": 29, "question": "Do you like learning new technologies or software?", "type": "mcq", "options": [ { "text": "Very much", "score": { "R": 1, "I": 1 } }, { "text": "Somewhat", "score": { "R": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Slightly", "score": { } }, { "text": "Not at all", "score": { } } ] },
+        { "id": 30, "question": "Do you enjoy helping others learn new things?", "type": "mcq", "options": [ { "text": "Very much", "score": { "S": 2 } }, { "text": "Somewhat", "score": { "S": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Slightly", "score": { } }, { "text": "Not at all", "score": { } } ] },
+        { "id": 31, "question": "I prefer careers that are…", "type": "mcq", "options": [ { "text": "Structured and predictable", "score": { "C": 2 } }, { "text": "Creative and flexible", "score": { "A": 2 } }, { "text": "Socially impactful", "score": { "S": 2 } }, { "text": "Technical/problem-solving", "score": { "I": 1, "R": 1 } }, { "text": "Leadership-oriented", "score": { "E": 2 } } ] },
+        { "id": 32, "question": "Any other career aspirations you want to share?", "type": "open" }
+      ],
+      "scoring": {
+        "codes": {
+          "R": "Realistic — hands-on, tools, machines, fieldwork",
+          "I": "Investigative — analytical, STEM, research",
+          "A": "Artistic — creative expression, design, media",
+          "S": "Social — helping, teaching, counseling",
+          "E": "Enterprising — business, leadership, entrepreneurship",
+          "C": "Conventional — organization, admin, structure"
+        },
+        "method": "Sum option-level points per code; top 2–3 codes define primary fit clusters. Context/open items carry no score and feed personalization."
+      }
+    },
+    {
+      "class": "12",
+      "title": "EduGuideAI — Class 12 Degree, College & Career Path",
+      "questions": [
+        { "id": 1, "question": "Which stream did you choose in Class 11–12?", "type": "mcq", "options": [ { "text": "Science (PCM)", "score": { "I": 2, "R": 1 } }, { "text": "Science (PCB)", "score": { "I": 2, "S": 1 } }, { "text": "Commerce", "score": { "E": 2, "C": 1 } }, { "text": "Arts/Humanities", "score": { "A": 2, "S": 1 } }, { "text": "Vocational/Other", "score": { "R": 2 } } ] },
+        { "id": 2, "question": "Why did you choose this stream?", "type": "mcq", "options": [ { "text": "Personal interest", "score": { "A": 1, "I": 1 } }, { "text": "Parental advice", "score": { } }, { "text": "Teacher guidance", "score": { } }, { "text": "Peer influence", "score": { } }, { "text": "Job prospects", "score": { "E": 1 } } ] },
+        { "id": 3, "question": "Which subject do you enjoy most?", "type": "mcq", "options": [ { "text": "Physics", "score": { "I": 2, "R": 1 } }, { "text": "Chemistry", "score": { "I": 2 } }, { "text": "Biology", "score": { "I": 1, "S": 1 } }, { "text": "Mathematics", "score": { "I": 2 } }, { "text": "Accounts", "score": { "C": 2 } }, { "text": "Economics", "score": { "E": 1, "C": 1 } }, { "text": "History", "score": { "S": 1 } }, { "text": "English", "score": { "A": 1, "S": 1 } }, { "text": "Other", "score": { } } ] },
+        { "id": 4, "question": "Which subject do you find most challenging?", "type": "mcq", "options": [ { "text": "Physics", "score": { } }, { "text": "Chemistry", "score": { } }, { "text": "Biology", "score": { } }, { "text": "Mathematics", "score": { } }, { "text": "Accounts", "score": { } }, { "text": "Economics", "score": { } }, { "text": "History", "score": { } }, { "text": "English", "score": { } }, { "text": "Other", "score": { } } ] },
+        { "id": 5, "question": "If you could re-choose your stream, would you pick the same? Why or why not?", "type": "open" },
+        { "id": 6, "question": "I enjoy working with:", "type": "mcq", "options": [ { "text": "Numbers/data", "score": { "I": 2, "C": 1 } }, { "text": "People/communication", "score": { "S": 2, "E": 1 } }, { "text": "Machines/tools", "score": { "R": 2, "I": 1 } }, { "text": "Creative ideas/art", "score": { "A": 2 } }, { "text": "Social problems", "score": { "S": 2 } } ] },
+        { "id": 7, "question": "Which type of exam section are you strongest at?", "type": "mcq", "options": [ { "text": "Quantitative", "score": { "I": 2 } }, { "text": "Logical reasoning", "score": { "I": 2 } }, { "text": "Verbal reasoning", "score": { "S": 1, "A": 1 } }, { "text": "Practical/hands-on", "score": { "R": 2 } }, { "text": "Analytical (case/data)", "score": { "I": 2, "E": 1 } } ] },
+        { "id": 8, "question": "Preferred work style?", "type": "mcq", "options": [ { "text": "Structured with deadlines", "score": { "C": 2 } }, { "text": "Flexible and exploratory", "score": { "A": 2 } }, { "text": "Mix of both", "score": { } }, { "text": "Solo", "score": { "I": 1, "A": 1 } }, { "text": "Teamwork", "score": { "S": 2, "E": 1 } } ] },
+        { "id": 9, "question": "After graduation, I want to…", "type": "mcq", "options": [ { "text": "Prepare for government exams", "score": { "C": 1 } }, { "text": "Pursue higher studies (PG/abroad)", "score": { "I": 1 } }, { "text": "Get a professional job", "score": { } }, { "text": "Start my own venture", "score": { "E": 2 } }, { "text": "Other", "score": { } } ] },
+        { "id": 10, "question": "I prefer working in…", "type": "mcq", "options": [ { "text": "Office setting with computers/data", "score": { "C": 1, "I": 1 } }, { "text": "Laboratory/research environment", "score": { "I": 2 } }, { "text": "Outdoors/fieldwork", "score": { "R": 2 } }, { "text": "Studio/creative space", "score": { "A": 2 } }, { "text": "Healthcare/helping professions", "score": { "S": 2 } } ] },
+        { "id": 11, "question": "I enjoy creative hobbies like…", "type": "mcq", "options": [ { "text": "Drawing/painting", "score": { "A": 2 } }, { "text": "Music", "score": { "A": 2 } }, { "text": "Writing", "score": { "A": 2 } }, { "text": "Crafts/design", "score": { "A": 2 } }, { "text": "Performing arts", "score": { "A": 2 } } ] },
+        { "id": 12, "question": "I like leadership roles in…", "type": "mcq", "options": [ { "text": "Teams", "score": { "E": 2 } }, { "text": "Projects", "score": { "E": 2 } }, { "text": "Events", "score": { "E": 2 } }, { "text": "Volunteer activities", "score": { "S": 1, "E": 1 } }, { "text": "Clubs/societies", "score": { "E": 2 } } ] },
+        { "id": 13, "question": "How important is financial stability in your career?", "type": "mcq", "options": [ { "text": "Very important", "score": { "C": 1 } }, { "text": "Important", "score": { "C": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Less important", "score": { } }, { "text": "Not important", "score": { } } ] },
+        { "id": 14, "question": "Are you considering scholarships/financial aid?", "type": "mcq", "options": [ { "text": "Yes, actively applying", "score": { } }, { "text": "Yes, but unsure where", "score": { } }, { "text": "No", "score": { } }, { "text": "Not applicable", "score": { } }, { "text": "Other", "score": { } } ] },
+        { "id": 15, "question": "Are you willing to move cities/states for college?", "type": "mcq", "options": [ { "text": "Yes", "score": { } }, { "text": "Maybe", "score": { } }, { "text": "No", "score": { } }, { "text": "Prefer only nearby", "score": { } }, { "text": "Not sure", "score": { } } ] },
+        { "id": 16, "question": "Which career cluster excites you most?", "type": "mcq", "options": [ { "text": "STEM (Tech, Engineering, Medicine)", "score": { "I": 2, "R": 1 } }, { "text": "Business/Commerce/Management", "score": { "E": 2, "C": 1 } }, { "text": "Arts/Media/Creative", "score": { "A": 2 } }, { "text": "Social/Public Service", "score": { "S": 2 } }, { "text": "Vocational/Skilled", "score": { "R": 2 } } ] },
+        { "id": 17, "question": "Which type of college are you considering?", "type": "mcq", "options": [ { "text": "Government", "score": { } }, { "text": "Private", "score": { } }, { "text": "Either (depends on course)", "score": { } }, { "text": "Online/Distance", "score": { } }, { "text": "Not sure", "score": { } } ] },
+        { "id": 18, "question": "Are parental expectations affecting your career choice?", "type": "mcq", "options": [ { "text": "Strongly", "score": { } }, { "text": "Somewhat", "score": { } }, { "text": "Neutral", "score": { } }, { "text": "Slightly", "score": { } }, { "text": "Not at all", "score": { } } ] },
+        { "id": 19, "question": "How much do you enjoy learning new technologies/tools?", "type": "mcq", "options": [ { "text": "Very much", "score": { "R": 1, "I": 1 } }, { "text": "Somewhat", "score": { "R": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Slightly", "score": { } }, { "text": "Not at all", "score": { } } ] },
+        { "id": 20, "question": "How much do you enjoy teaching/helping others?", "type": "mcq", "options": [ { "text": "Very much", "score": { "S": 2 } }, { "text": "Somewhat", "score": { "S": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Slightly", "score": { } }, { "text": "Not at all", "score": { } } ] },
+        { "id": 21, "question": "How important is recognition/status in your career?", "type": "mcq", "options": [ { "text": "Very important", "score": { "E": 1 } }, { "text": "Important", "score": { "E": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Less important", "score": { } }, { "text": "Not important", "score": { } } ] },
+        { "id": 22, "question": "Do you enjoy solving real-world problems?", "type": "mcq", "options": [ { "text": "Very much", "score": { "I": 1, "R": 1 } }, { "text": "Somewhat", "score": { "I": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Slightly", "score": { } }, { "text": "Not at all", "score": { } } ] },
+        { "id": 23, "question": "Do you prefer solo work or team work?", "type": "mcq", "options": [ { "text": "Solo", "score": { "I": 1, "A": 1 } }, { "text": "Team", "score": { "S": 2, "E": 1 } }, { "text": "Mix", "score": { } }, { "text": "Depends on task", "score": { } }, { "text": "Not sure", "score": { } } ] },
+        { "id": 24, "question": "How comfortable are you with public speaking?", "type": "mcq", "options": [ { "text": "Very comfortable", "score": { "E": 2 } }, { "text": "Somewhat comfortable", "score": { "E": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Uncomfortable", "score": { } }, { "text": "Very uncomfortable", "score": { } } ] },
+        { "id": 25, "question": "Are you interested in entrepreneurship?", "type": "mcq", "options": [ { "text": "Very interested", "score": { "E": 2 } }, { "text": "Somewhat", "score": { "E": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Slightly", "score": { } }, { "text": "Not at all", "score": { } } ] },
+        { "id": 26, "question": "What motivates you most?", "type": "mcq", "options": [ { "text": "Money", "score": { "E": 2 } }, { "text": "Recognition", "score": { "E": 1 } }, { "text": "Passion", "score": { "A": 1 } }, { "text": "Social impact", "score": { "S": 2 } }, { "text": "Learning", "score": { "I": 1 } } ] },
+        { "id": 27, "question": "Would you like to pursue multiple career options (dual paths)?", "type": "mcq", "options": [ { "text": "Yes", "score": { } }, { "text": "Maybe", "score": { } }, { "text": "No", "score": { } }, { "text": "Not sure", "score": { } }, { "text": "Depends", "score": { } } ] },
+        { "id": 28, "question": "How do you handle stress in work/study?", "type": "mcq", "options": [ { "text": "Plan carefully", "score": { "C": 2 } }, { "text": "Ask help", "score": { "S": 1 } }, { "text": "Work independently", "score": { "I": 1 } }, { "text": "Avoid tasks", "score": { } }, { "text": "Adapt easily", "score": { "E": 1 } } ] },
+        { "id": 29, "question": "Which environment do you prefer for learning?", "type": "mcq", "options": [ { "text": "Classroom", "score": { "C": 1 } }, { "text": "Lab", "score": { "I": 2 } }, { "text": "Online", "score": { } }, { "text": "Outdoors", "score": { "R": 2 } }, { "text": "Mixed", "score": { } } ] },
+        { "id": 30, "question": "How important is creativity in your career?", "type": "mcq", "options": [ { "text": "Very important", "score": { "A": 2 } }, { "text": "Important", "score": { "A": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Less important", "score": { } }, { "text": "Not important", "score": { } } ] },
+        { "id": 31, "question": "Which professionals do you admire most?", "type": "open" },
+        { "id": 32, "question": "If you could shadow a professional for a week, whom would you choose?", "type": "open" },
+        { "id": 33, "question": "What skills do you want to develop in the next 2–3 years?", "type": "open" },
+        { "id": 34, "question": "What worries you most about your future?", "type": "open" },
+        { "id": 35, "question": "I enjoy planning and organizing tasks.", "type": "mcq", "options": [ { "text": "Very much", "score": { "C": 2 } }, { "text": "Somewhat", "score": { "C": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Slightly", "score": { } }, { "text": "Not at all", "score": { } } ] },
+        { "id": 36, "question": "I prefer careers that are structured or flexible.", "type": "mcq", "options": [ { "text": "Structured", "score": { "C": 2 } }, { "text": "Flexible", "score": { "A": 2 } }, { "text": "Mix", "score": { } }, { "text": "Depends", "score": { } }, { "text": "Not sure", "score": { } } ] },
+        { "id": 37, "question": "I like hands-on practical work.", "type": "mcq", "options": [ { "text": "Very much", "score": { "R": 2 } }, { "text": "Somewhat", "score": { "R": 1 } }, { "text": "Neutral", "score": { } }, { "text": "Slightly", "score": { } }, { "text": "Not at all", "score": { } } ] },
+        { "id": 38, "question": "Any other career aspirations you want to share?", "type": "open" }
+      ],
+      "scoring": {
+        "codes": {
+          "R": "Realistic — hands-on, tools, machines, fieldwork",
+          "I": "Investigative — analytical, STEM, research",
+          "A": "Artistic — creative expression, design, media",
+          "S": "Social — helping, teaching, counseling",
+          "E": "Enterprising — business, leadership, entrepreneurship",
+          "C": "Conventional — organization, admin, structure"
+        },
+        "method": "Sum option-level points per code; top 2–3 codes define primary fit clusters. Context/open items carry no score and feed personalization."
+      }
+    }
+  ],
+  "scoring_integration_notes": {
+    "tally": "For each quiz, initialize R,I,A,S,E,C = 0. For each MCQ answer, add the option's score weights. Open/context items (empty score objects) do not change tallies.",
+    "result": "Sort codes by total. Use top 2–3 codes to map to career clusters and degree suggestions; filter by context (stream, mobility, scholarships).",
+    "examples": {
+      "IR": "Engineering, CS, Data, Research",
+      "IA": "UX research, Technical writing, Science communication",
+      "AS": "Design, Media, Education, Counseling",
+      "SE": "Public administration, HR, Social entrepreneurship",
+      "EC": "Management, Finance, Operations, Analytics",
+      "RC": "Technician, Operations, Supply chain, Quality"
+    }
+  }
+}
+
+

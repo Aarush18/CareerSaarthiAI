@@ -1,121 +1,54 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { trpc } from "@/trpc/client";
-import { ResultSummary } from "@/components/quiz/result-summary";
-import { LoadingState } from "@/components/loading-state";
-import { ErrorState } from "@/components/error-state";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { RefreshCw, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Flowchart } from "@/components/flowchart";
 
 export default function QuizResultPage() {
-  const searchParams = useSearchParams();
-  const submissionId = searchParams.get("submissionId");
-
-  const { data: submission, isLoading, error, refetch } =
-    trpc.quiz.getSubmissionDetail.useQuery(
-      { submissionId: submissionId! },
-      { enabled: !!submissionId }
-    );
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <LoadingState
-          title="Loading quizzes"
-          description="Please wait while we load your quiz results."
-        />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="space-y-4">
-          <ErrorState
-            title="Failed to load results"
-            description="There was an error loading your quiz results. Please try again."
-          />
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button onClick={() => refetch()} variant="outline">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Try Again
-            </Button>
-            <Button asChild variant="ghost">
-              <Link href="/quiz">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Quiz
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!submission) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Card className="max-w-2xl mx-auto text-center">
-          <CardHeader>
-            <CardTitle>Results Not Found</CardTitle>
-            <CardDescription>
-              The requested quiz results could not be found or are no longer available.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <Button asChild>
-                <Link href="/quiz">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Quiz
-                </Link>
-              </Button>
-              <Button onClick={() => refetch()} variant="outline">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Try Again
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  const objectiveAnswers = submission.answers.filter(a => a.isCorrect !== null);
-  const maxScore = objectiveAnswers.length;
-
-  const traits = submission.rawTraits || {};
-  const sortedTraits = Object.entries(traits).sort(([, a], [, b]) => b - a);
-  const topTraits = sortedTraits.slice(0, 2);
-
-  const suggestedStreams: string[] = [];
-  const weakTopics: string[] = [];
-
-  if (topTraits.length > 0) {
-    const [topTrait] = topTraits;
-    if (topTrait[0] === "I" || topTrait[0] === "R") suggestedStreams.push("SCIENCE");
-    if (topTrait[0] === "C" || topTrait[0] === "E") suggestedStreams.push("COMMERCE");
-    if (topTrait[0] === "A" || topTrait[0] === "S") suggestedStreams.push("ARTS");
-    const weakTraits = sortedTraits.slice(-2).map(([trait]) => trait);
-    weakTopics.push(...weakTraits);
-  }
+  const [data, setData] = useState<any | null>(null);
+  const [selected, setSelected] = useState<any | null>(null);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const raw = sessionStorage.getItem("quiz_result_payload");
+      if (raw) setData(JSON.parse(raw));
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <ResultSummary
-          score={submission.score}
-          maxScore={maxScore}
-          traits={traits}
-          suggestedStreams={suggestedStreams}
-          weakTopics={weakTopics}
-          submissionId={submission.id}
-          forLevel={submission.quizId?.includes("class-10") ? "CLASS_10" : "CLASS_12"}
-        />
+        {!data ? (
+          <Card className="max-w-2xl mx-auto text-center">
+            <CardHeader>
+              <CardTitle>No Result</CardTitle>
+            </CardHeader>
+            <CardContent>
+              Complete a quiz to see your recommendations.
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            <Flowchart data={data} onSelect={(p) => setSelected(p)} />
+            {selected && (
+              <div className="mt-6 p-4 border rounded bg-white">
+                <h2 className="text-xl font-semibold mb-2">{selected.name}</h2>
+                <p className="text-gray-700 mb-2">{selected.description}</p>
+                <p className="text-gray-800 font-medium mb-2">Why recommended</p>
+                <p className="text-sm text-gray-700 mb-3">{selected.whyRecommended}</p>
+                <p className="text-gray-800 font-medium mb-2">Steps to enter</p>
+                <ul className="list-disc pl-6 text-sm mb-3">
+                  {selected.stepsToEnter.map((s: string, i: number) => (<li key={i}>{s}</li>))}
+                </ul>
+                <p className="text-gray-800 font-medium mb-2">Skills</p>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {selected.skills.map((s: string, i: number) => (<span key={i} className="px-2 py-1 text-xs bg-gray-100 rounded">{s}</span>))}
+                </div>
+                <div className="text-sm text-gray-700">Earnings (INR/yr): {selected.approxEarningsINRPerYear.min.toLocaleString()} - {selected.approxEarningsINRPerYear.max.toLocaleString()}</div>
+                <div className="text-sm text-gray-700">Demand in India: {selected.demandIndia.level} — {selected.demandIndia.justification}</div>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

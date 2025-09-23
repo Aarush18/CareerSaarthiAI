@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { trpc } from "@/trpc/client";
-import { QuestionStepper } from "@/components/quiz/question-stepper";
+import { JsonQuestionStepper } from "@/components/quiz/json-question-stepper";
 import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,25 +13,11 @@ import Link from "next/link";
 export default function TakeQuizPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const quizId = searchParams.get("quizId");
-  
+  const quizClass = searchParams.get("class") === "12" ? "12" : "10";
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const { data: quiz, isLoading, error, refetch } = trpc.quiz.getActiveQuiz.useQuery({
-    forLevel: "ANY"
-  }, {
-    enabled: !!quizId
-  });
-
-  const submitQuizMutation = trpc.quiz.submitQuiz.useMutation({
-    onSuccess: (data) => {
-      router.push(`/quiz/result?submissionId=${data.submissionId}`);
-    },
-    onError: (error) => {
-      console.error("Failed to submit quiz:", error);
-      setIsSubmitting(false);
-    }
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [quiz, setQuiz] = useState<{ title: string; questions: any[] } | null>(null);
 
   // Prevent navigation away if quiz is in progress
   useEffect(() => {
@@ -45,18 +30,40 @@ export default function TakeQuizPage() {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
 
-  const handleQuizComplete = async (answers: Array<{ questionId: string; selectedOptionIndex: number }>) => {
-    if (!quiz) return;
-    
+  useEffect(() => {
+    async function loadQuiz() {
+      setIsLoading(true);
+      try {
+        const res = await fetch("/api/quiz/questions");
+        const data = await res.json();
+        const q = data.quizzes.find((q: any) => q.class === quizClass);
+        setQuiz({ title: q.title, questions: q.questions });
+      } catch (e) {
+        setError("Failed to load quiz");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadQuiz();
+  }, [quizClass]);
+
+  const handleQuizComplete = async (answers: Record<string, number | string>) => {
     setIsSubmitting(true);
     try {
-      await submitQuizMutation.mutateAsync({
-        quizId: quiz.id,
-        answers
+      const meta = { userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "", timestamp: new Date().toISOString() };
+      const res = await fetch("/api/quiz/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quizClass, answers, meta }),
       });
-    } catch (error) {
-      console.error("Quiz submission failed:", error);
+      if (!res.ok) throw new Error(`Submit failed: ${res.status}`);
+      const payload = await res.json();
+      if (typeof window !== "undefined") sessionStorage.setItem("quiz_result_payload", JSON.stringify(payload));
+      router.push(`/quiz/result`);
+    } catch (e) {
+      console.error("Quiz submission failed:", e);
       setIsSubmitting(false);
+      setError("Submission failed");
     }
   };
 
@@ -77,12 +84,7 @@ export default function TakeQuizPage() {
         <ErrorState 
           title="Failed to load quiz"
           description="There was an error loading the quiz. Please try again."
-          action={
-            <Button onClick={() => refetch()} variant="outline">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Try Again
-            </Button>
-          }
+          action={<Button onClick={() => location.reload()} variant="outline"><RefreshCw className="h-4 w-4 mr-2" />Try Again</Button>}
         />
       </div>
     );
@@ -137,11 +139,7 @@ export default function TakeQuizPage() {
         </div>
 
         {/* Quiz Stepper */}
-        <QuestionStepper
-          questions={quiz.questions}
-          onComplete={handleQuizComplete}
-          isLoading={isSubmitting}
-        />
+        <JsonQuestionStepper questions={quiz.questions} onComplete={handleQuizComplete} isLoading={isSubmitting} />
 
         {/* Instructions */}
         <div className="mt-8 max-w-2xl mx-auto">
