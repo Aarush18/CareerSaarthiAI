@@ -6,7 +6,8 @@ Create a file named `.env.local` in your project root with the following content
 
 ```bash
 # Add your Gemini API key here
-GEMINI_API_KEY="AIzaSyAkiSbRAjNiVchWiEH_ZcIxSj0dWnmB08I"
+
+
 
 # Database (if needed)
 DATABASE_URL="postgresql://username:password@hostname:port/database"
