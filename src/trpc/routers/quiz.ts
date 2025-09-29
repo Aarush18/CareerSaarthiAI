@@ -1,106 +1,118 @@
+// src/server/routers/quiz.ts
 import { z } from "zod";
 import { db } from "@/db";
-import { 
-  aptitudeQuizzes, 
-  quizQuestions, 
-  quizSubmissions, 
-  quizAnswers 
+import {
+  aptitudeQuizzes,
+  quizQuestions,
+  quizSubmissions,
+  quizAnswers,
 } from "@/db/quiz";
 import { createTRPCRouter, baseProcedure } from "../init";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, inArray, asc, desc } from "drizzle-orm";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { mockQuizzes } from "@/db/mock";
 
-// Input validation schemas
+// ---------- Input Schemas ----------
 const getActiveQuizInput = z.object({
-  forLevel: z.enum(['CLASS_10', 'CLASS_12', 'ANY']).optional().default('ANY'),
+  forLevel: z.enum(["CLASS_10", "CLASS_12", "ANY"]).optional().default("ANY"),
 });
 
 const submitQuizInput = z.object({
   quizId: z.string(),
-  answers: z.array(z.object({
-    questionId: z.string(),
-    selectedOptionIndex: z.number().min(0).max(3),
-  })),
+  answers: z.array(
+    z.object({
+      questionId: z.string(),
+      selectedOptionIndex: z.number().min(0).max(3),
+    })
+  ),
 });
 
 const getSubmissionDetailInput = z.object({
   submissionId: z.string(),
 });
 
-// Helper function to calculate RIASEC traits
-function calculateRIASECTraits(answers: Array<{ questionId: string; selectedOptionIndex: number }>, questions: any[]) {
-  const traits: Record<string, number> = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
-  
-  answers.forEach(answer => {
-    const question = questions.find(q => q.id === answer.questionId);
-    if (question && ['R', 'I', 'A', 'S', 'E', 'C'].includes(question.topicTag)) {
-      const weight = answer.selectedOptionIndex; // 0-3 scale
-      traits[question.topicTag] += weight;
-    }
+// ---------- Helpers ----------
+type AnswerDTO = { questionId: string; selectedOptionIndex: number };
+type QuestionRow = {
+  id: string;
+  topicTag: string | null;
+  // weight etc. may exist, but we only need topicTag here
+};
+
+function calculateRIASECTraits(
+  answers: AnswerDTO[],
+  questions: QuestionRow[]
+) {
+  const traits: Record<string, number> = {
+    R: 0,
+    I: 0,
+    A: 0,
+    S: 0,
+    E: 0,
+    C: 0,
+  };
+
+  answers.forEach((answer) => {
+    const q = questions.find((qq) => qq.id === answer.questionId);
+    if (!q || !q.topicTag) return;
+    if (!["R", "I", "A", "S", "E", "C"].includes(q.topicTag)) return;
+
+    // 0–3 scale → directly add; you can scale/weight later if needed
+    traits[q.topicTag] += answer.selectedOptionIndex;
   });
-  
+
   return traits;
 }
 
-// Helper function to suggest streams based on traits
 function suggestStreams(traits: Record<string, number>) {
-  const sortedTraits = Object.entries(traits)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 2);
-  
-  const [topTrait, secondTrait] = sortedTraits;
+  const sorted = Object.entries(traits).sort(([, a], [, b]) => b - a);
+  const [top] = sorted;
+
   const suggestions: string[] = [];
-  const weakTopics: string[] = [];
-  
-  // Map RIASEC combinations to stream suggestions
-  if (topTrait[0] === 'I' || topTrait[0] === 'R') {
-    suggestions.push('SCIENCE');
+  const total = Object.values(traits).reduce((s, x) => s + x, 0);
+
+  if (top) {
+    const [t] = top;
+    if (t === "I" || t === "R") suggestions.push("SCIENCE");
+    if (t === "C" || t === "E") suggestions.push("COMMERCE");
+    if (t === "A" || t === "S") suggestions.push("ARTS");
   }
-  if (topTrait[0] === 'C' || topTrait[0] === 'E') {
-    suggestions.push('COMMERCE');
-  }
-  if (topTrait[0] === 'A' || topTrait[0] === 'S') {
-    suggestions.push('ARTS');
-  }
-  
-  // If low scores across all traits, suggest vocational
-  const totalScore = Object.values(traits).reduce((sum, score) => sum + score, 0);
-  if (totalScore < 20) {
-    suggestions.push('VOCATIONAL');
-  }
-  
-  // Identify weak topics (lowest scoring traits)
-  const weakTraits = Object.entries(traits)
-    .sort(([,a], [,b]) => a - b)
-    .slice(0, 2)
-    .map(([trait]) => trait);
-  
-  weakTopics.push(...weakTraits);
-  
+  if (total < 20) suggestions.push("VOCATIONAL");
+
+  const weakTopics = sorted
+    .slice(-2)
+    .map(([k]) => k)
+    .filter(Boolean);
+
   return { suggestions, weakTopics };
 }
 
+// ===================================================================
+
 export const quizRouter = createTRPCRouter({
-  // Get active quiz with questions
+  // ---------- Get active quiz with questions ----------
   getActiveQuiz: baseProcedure
     .input(getActiveQuizInput)
     .query(async ({ input }) => {
       try {
-        const quiz = await db
+        // 🔑 Allow fallback to "ANY" so UI never gets null if a level-specific quiz isn't present
+        const rows = await db
           .select()
           .from(aptitudeQuizzes)
           .where(
             and(
               eq(aptitudeQuizzes.isActive, true),
-              eq(aptitudeQuizzes.forLevel, input.forLevel)
+              inArray(aptitudeQuizzes.forLevel, [input.forLevel, "ANY"] as const)
             )
           )
+          .orderBy(desc(aptitudeQuizzes.createdAt)) // newest active wins
           .limit(1);
 
-        if (quiz.length === 0) {
+        if (rows.length === 0) {
           return null;
         }
+
+        const quiz = rows[0];
 
         const questions = await db
           .select({
@@ -110,120 +122,122 @@ export const quizRouter = createTRPCRouter({
             options: quizQuestions.options,
             topicTag: quizQuestions.topicTag,
             weight: quizQuestions.weight,
+            correctOptionIndex: quizQuestions.correctOptionIndex,
           })
           .from(quizQuestions)
-          .where(eq(quizQuestions.quizId, quiz[0].id))
-          .orderBy(quizQuestions.orderIndex);
+          .where(eq(quizQuestions.quizId, quiz.id))
+          .orderBy(asc(quizQuestions.orderIndex));
 
         return {
-          id: quiz[0].id,
-          title: quiz[0].title,
-          description: quiz[0].description,
-          forLevel: quiz[0].forLevel,
+          id: quiz.id,
+          title: quiz.title,
+          description: quiz.description,
+          forLevel: quiz.forLevel,
           questions,
         };
       } catch (error) {
-        console.error('Database error in getActiveQuiz:', error);
-        console.log('🔄 Falling back to mock data for development');
-        
-        // Return mock data for development when database is not available
-        if (input.forLevel === 'CLASS_10') {
-          return mockQuizzes.CLASS_10;
-        }
-        if (input.forLevel === 'CLASS_12') {
-          return mockQuizzes.CLASS_12;
-        }
-        // Fallback to CLASS_10 for ANY level
+        console.error("Database error in getActiveQuiz:", error);
+        console.log("🔄 Falling back to mock data for development");
+
+        if (input.forLevel === "CLASS_10") return mockQuizzes.CLASS_10;
+        if (input.forLevel === "CLASS_12") return mockQuizzes.CLASS_12;
         return mockQuizzes.CLASS_10;
-        
-        throw new Error('Database connection failed. Please check your DATABASE_URL environment variable.');
       }
     }),
 
-  // Submit quiz answers
+  // ---------- Submit quiz answers ----------
   submitQuiz: baseProcedure
     .input(submitQuizInput)
     .mutation(async ({ input, ctx }) => {
       try {
-        // TODO: Replace with proper auth context when available
-        const studentId = ctx.userId || 'user_123'; // Temporary fallback
-        
-        // Rate limiting: max 3 submissions per 15 minutes per user
-        const rateLimit = checkRateLimit(`quiz_submit_${studentId}`, 3, 15 * 60 * 1000);
-        if (!rateLimit.allowed) {
-          throw new Error(`Rate limit exceeded. Please wait ${Math.ceil((rateLimit.resetTime - Date.now()) / 60000)} minutes before submitting again.`);
+        const studentId = ctx.userId || "user_123"; // temporary fallback
+
+        // Rate limit: 3 submissions / 15 min
+        const rl = checkRateLimit(
+          `quiz_submit_${studentId}`,
+          3,
+          15 * 60 * 1000
+        );
+        if (!rl.allowed) {
+          throw new Error(
+            `Rate limit exceeded. Please wait ${Math.ceil(
+              (rl.resetTime - Date.now()) / 60000
+            )} minutes before submitting again.`
+          );
         }
-      
-      // Get quiz and questions for validation
-      const quiz = await db
-        .select()
-        .from(aptitudeQuizzes)
-        .where(eq(aptitudeQuizzes.id, input.quizId))
-        .limit(1);
 
-      if (quiz.length === 0) {
-        throw new Error('Quiz not found');
-      }
+        // Validate quiz
+        const quiz = await db
+          .select()
+          .from(aptitudeQuizzes)
+          .where(eq(aptitudeQuizzes.id, input.quizId))
+          .limit(1);
 
-      const questions = await db
-        .select()
-        .from(quizQuestions)
-        .where(eq(quizQuestions.quizId, input.quizId));
+        if (quiz.length === 0) throw new Error("Quiz not found");
 
-      // Create submission
-      const [submission] = await db
-        .insert(quizSubmissions)
-        .values({
-          quizId: input.quizId,
-          studentId,
-        })
-        .returning();
+        const questions = await db
+          .select()
+          .from(quizQuestions)
+          .where(eq(quizQuestions.quizId, input.quizId));
 
-      // Process answers and calculate scores
-      let objectiveScore = 0;
-      let totalObjectiveQuestions = 0;
-      const answersToInsert = [];
+        // Create submission
+        const [submission] = await db
+          .insert(quizSubmissions)
+          .values({
+            quizId: input.quizId,
+            studentId,
+          })
+          .returning();
 
-      for (const answer of input.answers) {
-        const question = questions.find(q => q.id === answer.questionId);
-        if (!question) continue;
+        // Score objective & accumulate answers
+        let objectiveScore = 0;
+        let totalObjective = 0;
+        const answersToInsert: {
+          submissionId: string;
+          questionId: string;
+          selectedOptionIndex: number;
+          isCorrect: boolean | null;
+        }[] = [];
 
-        let isCorrect = null;
-        if (question.correctOptionIndex !== null) {
-          isCorrect = answer.selectedOptionIndex === question.correctOptionIndex;
-          if (isCorrect) {
-            objectiveScore += question.weight;
+        for (const ans of input.answers) {
+          const q = questions.find((qq) => qq.id === ans.questionId);
+          if (!q) continue;
+
+          let isCorrect: boolean | null = null;
+          if (q.correctOptionIndex !== null && q.correctOptionIndex !== undefined) {
+            isCorrect = ans.selectedOptionIndex === q.correctOptionIndex;
+            if (isCorrect) objectiveScore += q.weight ?? 1;
+            totalObjective++;
           }
-          totalObjectiveQuestions++;
+
+          answersToInsert.push({
+            submissionId: submission.id,
+            questionId: ans.questionId,
+            selectedOptionIndex: ans.selectedOptionIndex,
+            isCorrect,
+          });
         }
 
-        answersToInsert.push({
-          submissionId: submission.id,
-          questionId: answer.questionId,
-          selectedOptionIndex: answer.selectedOptionIndex,
-          isCorrect,
-        });
-      }
+        if (answersToInsert.length) {
+          await db.insert(quizAnswers).values(answersToInsert);
+        }
 
-      // Insert all answers
-      await db.insert(quizAnswers).values(answersToInsert);
+        // RIASEC traits & streams
+        const traits = calculateRIASECTraits(
+          input.answers,
+          questions.map((q) => ({ id: q.id, topicTag: q.topicTag }))
+        );
+        const { suggestions, weakTopics } = suggestStreams(traits);
 
-      // Calculate RIASEC traits
-      const traits = calculateRIASECTraits(input.answers, questions);
-      
-      // Get stream suggestions
-      const { suggestions, weakTopics } = suggestStreams(traits);
+        const finalScore = totalObjective > 0 ? objectiveScore : null;
 
-      // Update submission with scores and traits
-      const finalScore = totalObjectiveQuestions > 0 ? objectiveScore : null;
-      
-      await db
-        .update(quizSubmissions)
-        .set({
-          score: finalScore,
-          rawTraits: traits,
-        })
-        .where(eq(quizSubmissions.id, submission.id));
+        await db
+          .update(quizSubmissions)
+          .set({
+            score: finalScore,
+            rawTraits: traits,
+          })
+          .where(eq(quizSubmissions.id, submission.id));
 
         return {
           submissionId: submission.id,
@@ -233,18 +247,22 @@ export const quizRouter = createTRPCRouter({
           weakTopics,
         };
       } catch (error) {
-        console.error('Database error in submitQuiz:', error);
-        console.log('🔄 Falling back to mock submission for development');
-        
-        // Return mock submission data for development when database is not available
-        // Determine which mock quiz to use based on the quiz ID
-        const mockQuiz = input.quizId.includes('class-10') ? mockQuizzes.CLASS_10 : mockQuizzes.CLASS_12;
-        const mockTraits = calculateRIASECTraits(input.answers, mockQuiz.questions);
+        console.error("Database error in submitQuiz:", error);
+        console.log("🔄 Falling back to mock submission for development");
+
+        const mockQuiz = input.quizId.includes("class-10")
+          ? mockQuizzes.CLASS_10
+          : mockQuizzes.CLASS_12;
+
+        const mockTraits = calculateRIASECTraits(
+          input.answers,
+          mockQuiz.questions as any
+        );
         const { suggestions, weakTopics } = suggestStreams(mockTraits);
-        
+
         return {
           submissionId: `mock-submission-${Date.now()}`,
-          score: null, // No objective questions in mock data
+          score: null,
           traits: mockTraits,
           suggestedStreams: suggestions,
           weakTopics,
@@ -252,49 +270,45 @@ export const quizRouter = createTRPCRouter({
       }
     }),
 
-  // Get user's quiz submissions
-  getMySubmissions: baseProcedure
-    .query(async ({ ctx }) => {
-      try {
-        // TODO: Replace with proper auth context when available
-        const studentId = ctx.userId || 'user_123'; // Temporary fallback
-        
-        const submissions = await db
-          .select({
-            id: quizSubmissions.id,
-            quizId: quizSubmissions.quizId,
-            createdAt: quizSubmissions.createdAt,
-            score: quizSubmissions.score,
-          })
-          .from(quizSubmissions)
-          .where(eq(quizSubmissions.studentId, studentId))
-          .orderBy(desc(quizSubmissions.createdAt));
+  // ---------- Get my submissions ----------
+  getMySubmissions: baseProcedure.query(async ({ ctx }) => {
+    try {
+      const studentId = ctx.userId || "user_123";
 
-        return submissions;
-      } catch (error) {
-        console.error('Database error in getMySubmissions:', error);
-        console.log('🔄 Falling back to mock submissions for development');
-        
-        // Return mock submissions for development
-        return [
-          {
-            id: 'mock-submission-1',
-            quizId: 'mock-quiz-1',
-            createdAt: new Date(),
-            score: null,
-          }
-        ];
-      }
-    }),
+      const submissions = await db
+        .select({
+          id: quizSubmissions.id,
+          quizId: quizSubmissions.quizId,
+          createdAt: quizSubmissions.createdAt,
+          score: quizSubmissions.score,
+        })
+        .from(quizSubmissions)
+        .where(eq(quizSubmissions.studentId, studentId))
+        .orderBy(desc(quizSubmissions.createdAt));
 
-  // Get detailed submission with answers
+      return submissions;
+    } catch (error) {
+      console.error("Database error in getMySubmissions:", error);
+      console.log("🔄 Falling back to mock submissions for development");
+
+      return [
+        {
+          id: "mock-submission-1",
+          quizId: "mock-quiz-1",
+          createdAt: new Date(),
+          score: null,
+        },
+      ];
+    }
+  }),
+
+  // ---------- Get detailed submission ----------
   getSubmissionDetail: baseProcedure
     .input(getSubmissionDetailInput)
     .query(async ({ input, ctx }) => {
       try {
-        // TODO: Replace with proper auth context when available
-        const studentId = ctx.userId || 'user_123'; // Temporary fallback
-        
+        const studentId = ctx.userId || "user_123";
+
         const submission = await db
           .select()
           .from(quizSubmissions)
@@ -307,7 +321,7 @@ export const quizRouter = createTRPCRouter({
           .limit(1);
 
         if (submission.length === 0) {
-          throw new Error('Submission not found');
+          throw new Error("Submission not found");
         }
 
         const answers = await db
@@ -325,23 +339,24 @@ export const quizRouter = createTRPCRouter({
           answers,
         };
       } catch (error) {
-        console.error('Database error in getSubmissionDetail:', error);
-        console.log('🔄 Falling back to mock submission detail for development');
-        
-        // Return mock submission detail for development
-        // Determine which mock quiz to use based on the submission ID
-        const mockQuiz = input.submissionId.includes('class-10') ? mockQuizzes.CLASS_10 : mockQuizzes.CLASS_12;
-        const mockAnswers = mockQuiz.questions.map((q, index) => ({
-          id: `mock-answer-${index}`,
+        console.error("Database error in getSubmissionDetail:", error);
+        console.log("🔄 Falling back to mock submission detail for development");
+
+        const mockQuiz = input.submissionId.includes("class-10")
+          ? mockQuizzes.CLASS_10
+          : mockQuizzes.CLASS_12;
+
+        const mockAnswers = (mockQuiz.questions as any[]).map((q, i) => ({
+          id: `mock-answer-${i}`,
           questionId: q.id,
-          selectedOptionIndex: 0, // Default to first option
+          selectedOptionIndex: 0,
           isCorrect: null,
         }));
-        
+
         return {
           id: input.submissionId,
-          quizId: 'mock-quiz-1',
-          studentId: 'user_123',
+          quizId: "mock-quiz-1",
+          studentId: "user_123",
           createdAt: new Date(),
           score: null,
           rawTraits: { R: 2, I: 1, A: 3, S: 2, E: 1, C: 2 },
